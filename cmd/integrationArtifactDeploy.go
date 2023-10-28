@@ -98,7 +98,7 @@ func runIntegrationArtifactDeploy(config *integrationArtifactDeployOptions, tele
 	if deployResp.StatusCode == http.StatusAccepted {
 		log.Entry().
 			WithField("IntegrationFlowID", config.IntegrationFlowID).
-			Info("successfully deployed into CPI runtime")
+			Info("JALAL- successfully deployed into CPI runtime")
 		taskId, readErr := io.ReadAll(deployResp.Body)
 		if readErr != nil {
 			return errors.Wrap(readErr, "Task Id not found. HTTP response body could not be read.")
@@ -182,7 +182,7 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	if deployStatusResp.StatusCode == http.StatusOK {
 		log.Entry().
 			WithField("IntegrationFlowID", config.IntegrationFlowID).
-			Info("Successfully started integration flow artefact in CPI runtime")
+			Info("JALAL- Successfully started integration flow artefact in CPI runtime")
 
 		bodyText, readErr := io.ReadAll(deployStatusResp.Body)
 		if readErr != nil {
@@ -220,7 +220,7 @@ func getIntegrationArtifactDeployError(config *integrationArtifactDeployOptions,
 	if errorStatusResp.StatusCode == http.StatusOK {
 		log.Entry().
 			WithField("IntegrationFlowID", config.IntegrationFlowID).
-			Info("Successfully retrieved Integration Flow artefact deploy error details")
+			Info("JALAL- Successfully retrieved Integration Flow artefact deploy error details")
 		responseBody, readErr := io.ReadAll(errorStatusResp.Body)
 		if readErr != nil {
 			return "", errors.Wrapf(readErr, "HTTP response body could not be read, response status code: %v", errorStatusResp.StatusCode)
