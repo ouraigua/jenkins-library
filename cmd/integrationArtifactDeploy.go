@@ -169,14 +169,14 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	header.Add("Accept", "application/json")
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
 	if err != nil {
-		return err
+		return ("ERROR", err)
 	}
 	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 
 	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
 	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
 	if err != nil {
-		return errors.Wrap(err, "failed to fetch Bearer Token")
+		return ("ERROR", errors.Wrap(err, "failed to fetch Bearer Token"))
 	}
 	clientOptions.Token = fmt.Sprintf("Bearer %s", token)
 	httpClient.SetOptions(clientOptions)
