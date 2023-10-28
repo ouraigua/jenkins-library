@@ -48,14 +48,22 @@ func runIntegrationArtifactGetMplStatus(
 	header.Add("Accept", "application/json")
 	mplStatusEncodedURL := fmt.Sprintf("%s/api/v1/MessageProcessingLogs?$filter=IntegrationArtifact/Id"+url.QueryEscape(" eq ")+"'%s'"+
 		url.QueryEscape(" and Status ne ")+"'DISCARDED'"+"&$orderby="+url.QueryEscape("LogEnd desc")+"&$top=1", serviceKey.OAuth.Host, config.IntegrationFlowID)
-	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
-	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
-	if err != nil {
-		return errors.Wrap(err, "failed to fetch Bearer Token")
-	}
-	clientOptions.Token = fmt.Sprintf("Bearer %s", token)
-	httpClient.SetOptions(clientOptions)
+	
+	// tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
+	// token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
+	// if err != nil {
+		// return errors.Wrap(err, "failed to fetch Bearer Token")
+	// }
+	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
+	// httpClient.SetOptions(clientOptions)
+	username := "P2007437277"
+	password := "gobxi0-cebFij-quvxaq"
+	basicAuth := username + ":" + password
+	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	header.Add("Authorization", authHeader)
 	httpMethod := "GET"
+
+
 	mplStatusResp, httpErr := httpClient.SendRequest(httpMethod, mplStatusEncodedURL, nil, header, nil)
 	if httpErr != nil {
 		return errors.Wrapf(httpErr, "HTTP %v request to %v failed with error", httpMethod, mplStatusEncodedURL)
