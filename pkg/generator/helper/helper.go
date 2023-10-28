@@ -66,7 +66,7 @@ import (
 	"time"
 
 	{{ if .ExportPrefix -}}
-	{{ .ExportPrefix }} "github.com/ouraigua/jenkins-library/cmd"
+	{{ .ExportPrefix }} "github.com/SAP/jenkins-library/cmd"
 	{{ end -}}
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"

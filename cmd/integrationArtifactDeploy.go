@@ -164,11 +164,28 @@ func getHTTPErrorMessage(httpErr error, response *http.Response, httpMethod, sta
 
 // getIntegrationArtifactDeployStatus - Get integration artifact Deploy Status
 func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions, httpClient piperhttp.Sender, apiHost string, taskId string) (string, error) {
-	httpMethod := "GET"
+	clientOptions := piperhttp.ClientOptions{}
 	header := make(http.Header)
-	header.Add("content-type", "application/json")
 	header.Add("Accept", "application/json")
 	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
+	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
+	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
+	if err != nil {
+		return errors.Wrap(err, "failed to fetch Bearer Token")
+	}
+	clientOptions.Token = fmt.Sprintf("Bearer %s", token)
+	httpClient.SetOptions(clientOptions)
+	httpMethod := "GET"
+	
+	
+	
+	
+	
+	// httpMethod := "GET"
+	// header := make(http.Header)
+	// header.Add("content-type", "application/json")
+	// header.Add("Accept", "application/json")
+	// deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 	deployStatusResp, httpErr := httpClient.SendRequest(httpMethod, deployStatusURL, nil, header, nil)
 
 	if deployStatusResp != nil && deployStatusResp.Body != nil {
