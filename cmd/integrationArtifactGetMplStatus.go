@@ -56,9 +56,8 @@ func runIntegrationArtifactGetMplStatus(
 	// }
 	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
 	// httpClient.SetOptions(clientOptions)
-	username := "P2007437277"
-	password := "gobxi0-cebFij-quvxaq"
-	basicAuth := username + ":" + password
+	
+	basicAuth := "P2007437277" + ":" + "CHANGE_ME"
 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
 	header.Add("Authorization", authHeader)
 	httpMethod := "GET"
@@ -120,10 +119,9 @@ func getIntegrationArtifactMPLError(commonPipelineEnvironment *integrationArtifa
 	httpMethod := "GET"
 	header := make(http.Header)
 	header.Add("content-type", "application/json")
+	
 	// Set your Basic Authentication credentials
-	username := "P2007437277"
-	password := "gobxi0-cebFij-quvxaq"
-	basicAuth := username + ":" + password
+	basicAuth := "P2007437277" + ":" + "CHANGE_ME"
 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
 	header.Add("Authorization", authHeader)
 	errorStatusURL := fmt.Sprintf("%s/api/v1/MessageProcessingLogs('%s')/ErrorInformation/$value", apiHost, mplID)

@@ -197,9 +197,7 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	header.Add("Accept", "application/json")
 
 	// Set your Basic Authentication credentials
-	username := "P2007437277"
-	password := "gobxi0-cebFij-quvxaq"
-	basicAuth := username + ":" + password
+	basicAuth := "P2007437277" + ":" + "CHANGE_ME"
 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
 	header.Add("Authorization", authHeader)
 
