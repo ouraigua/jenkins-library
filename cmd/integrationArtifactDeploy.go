@@ -167,7 +167,12 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	clientOptions := piperhttp.ClientOptions{}
 	header := make(http.Header)
 	header.Add("Accept", "application/json")
+	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
+	if err != nil {
+		return err
+	}
 	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
+
 	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
 	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
 	if err != nil {
@@ -176,10 +181,6 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	clientOptions.Token = fmt.Sprintf("Bearer %s", token)
 	httpClient.SetOptions(clientOptions)
 	httpMethod := "GET"
-	
-	
-	
-	
 	
 	// httpMethod := "GET"
 	// header := make(http.Header)
