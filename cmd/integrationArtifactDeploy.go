@@ -164,30 +164,49 @@ func getHTTPErrorMessage(httpErr error, response *http.Response, httpMethod, sta
 
 // getIntegrationArtifactDeployStatus - Get integration artifact Deploy Status
 func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions, httpClient piperhttp.Sender, apiHost string, taskId string) (string, error) {
-	clientOptions := piperhttp.ClientOptions{}
-	header := make(http.Header)
-	header.Add("Accept", "application/json")
-	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
-	if err != nil {
-		return "ERROR", err
-	}
-	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
+	// clientOptions := piperhttp.ClientOptions{}
+	// header := make(http.Header)
+	// header.Add("Accept", "application/json")
+	// serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
+	// if err != nil {
+	// 	return "ERROR", err
+	// }
+	// deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 
-	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
-	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
-	if err != nil {
-		return "ERROR", errors.Wrap(err, "failed to fetch Bearer Token")
-	}
-	clientOptions.Token = fmt.Sprintf("Bearer %s", token)
-	httpClient.SetOptions(clientOptions)
-	httpMethod := "GET"
+	// tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
+	// token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
+	// if err != nil {
+	// 	return "ERROR", errors.Wrap(err, "failed to fetch Bearer Token")
+	// }
+	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
+	// httpClient.SetOptions(clientOptions)
+	// httpMethod := "GET"
 	
 	// httpMethod := "GET"
 	// header := make(http.Header)
 	// header.Add("content-type", "application/json")
 	// header.Add("Accept", "application/json")
 	// deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
+	// deployStatusResp, httpErr := httpClient.SendRequest(httpMethod, deployStatusURL, nil, header, nil)
+
+
+	httpMethod := "GET"
+	header := make(http.Header)
+	header.Add("content-type", "application/json")
+	header.Add("Accept", "application/json")
+
+	// Set your Basic Authentication credentials
+	username := "P2007437277"
+	password := "gobxi0-cebFij-quvxaq"
+	basicAuth := username + ":" + password
+	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	header.Add("Authorization", authHeader)
+
+	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 	deployStatusResp, httpErr := httpClient.SendRequest(httpMethod, deployStatusURL, nil, header, nil)
+
+
+
 
 	if deployStatusResp != nil && deployStatusResp.Body != nil {
 		defer deployStatusResp.Body.Close()
