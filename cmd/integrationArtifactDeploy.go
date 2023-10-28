@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"time"
+	"encoding/base64"
 
 	"github.com/Jeffail/gabs/v2"
 	"github.com/SAP/jenkins-library/pkg/command"
