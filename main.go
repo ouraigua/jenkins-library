@@ -4,7 +4,6 @@ package main
 
 import (
 	"github.com/SAP/jenkins-library/cmd"
-	// "github.com/ouraigua/jenkins-library/cmd"
 )
 
 func main() {

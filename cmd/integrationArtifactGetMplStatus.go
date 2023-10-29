@@ -49,17 +49,17 @@ func runIntegrationArtifactGetMplStatus(
 	mplStatusEncodedURL := fmt.Sprintf("%s/api/v1/MessageProcessingLogs?$filter=IntegrationArtifact/Id"+url.QueryEscape(" eq ")+"'%s'"+
 		url.QueryEscape(" and Status ne ")+"'DISCARDED'"+"&$orderby="+url.QueryEscape("LogEnd desc")+"&$top=1", serviceKey.OAuth.Host, config.IntegrationFlowID)
 	
-	// tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
-	// token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
-	// if err != nil {
-		// return errors.Wrap(err, "failed to fetch Bearer Token")
-	// }
-	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
-	// httpClient.SetOptions(clientOptions)
+	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
+	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
+	if err != nil {
+		return errors.Wrap(err, "failed to fetch Bearer Token")
+	}
+	clientOptions.Token = fmt.Sprintf("Bearer %s", token)
+	httpClient.SetOptions(clientOptions)
 	
-	basicAuth := "P2007437277" + ":" + "CHANGE_ME"
-	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
-	header.Add("Authorization", authHeader)
+	// basicAuth := "P2007437277" + ":" + "CHANGE_ME"
+	// authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	// header.Add("Authorization", authHeader)
 	httpMethod := "GET"
 
 
@@ -121,9 +121,9 @@ func getIntegrationArtifactMPLError(commonPipelineEnvironment *integrationArtifa
 	header.Add("content-type", "application/json")
 	
 	// Set your Basic Authentication credentials
-	basicAuth := "P2007437277" + ":" + "CHANGE_ME"
-	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
-	header.Add("Authorization", authHeader)
+	// basicAuth := "P2007437277" + ":" + "CHANGE_ME"
+	// authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	// header.Add("Authorization", authHeader)
 	errorStatusURL := fmt.Sprintf("%s/api/v1/MessageProcessingLogs('%s')/ErrorInformation/$value", apiHost, mplID)
 	errorStatusResp, httpErr := httpClient.SendRequest(httpMethod, errorStatusURL, nil, header, nil)
 

@@ -197,9 +197,9 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	header.Add("Accept", "application/json")
 
 	// Set your Basic Authentication credentials
-	basicAuth := "P2007437277" + ":" + "CHANGE_ME"
-	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
-	header.Add("Authorization", authHeader)
+	// basicAuth := "P2007437277" + ":" + "CHANGE_ME"
+	// authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	// header.Add("Authorization", authHeader)
 
 	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 	deployStatusResp, httpErr := httpClient.SendRequest(httpMethod, deployStatusURL, nil, header, nil)
