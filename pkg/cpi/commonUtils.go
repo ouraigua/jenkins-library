@@ -62,6 +62,8 @@ type OAuth struct {
 	OAuthTokenProviderURL string `json:"tokenurl"`
 	ClientID              string `json:"clientid"`
 	ClientSecret          string `json:"clientsecret"`
+	Username          		string `json:"username"`
+	Password          		string `json:"password"`
 }
 
 // ReadCpiServiceKey unmarshalls the give json service key string.

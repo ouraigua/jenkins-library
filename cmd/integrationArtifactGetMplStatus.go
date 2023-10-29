@@ -56,12 +56,12 @@ func runIntegrationArtifactGetMplStatus(
 	header.Add("Accept", "application/json")
 
 	// Add Basic Authentication credentials
-	withCredentials([usernamePassword(credentialsId: 'MY-SAP-TRIAL', passwordVariable: 'pass', usernameVariable: 'user')]) {
-    // the code here can access $pass and $user
-		basicAuth := $user + ":" + $pass
+	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
+	if serviceKey != nil {
+		basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
 		authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
-		header.Add("Authorization", authHeader)
-	}	
+		header.Add("Authorization", authHeader)	
+	}
 	
 	mplStatusEncodedURL := fmt.Sprintf("%s/api/v1/MessageProcessingLogs?$filter=IntegrationArtifact/Id"+url.QueryEscape(" eq ")+"'%s'"+
 		url.QueryEscape(" and Status ne ")+"'DISCARDED'"+"&$orderby="+url.QueryEscape("LogEnd desc")+"&$top=1", serviceKey.OAuth.Host, config.IntegrationFlowID)

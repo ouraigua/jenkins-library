@@ -172,14 +172,13 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	header.Add("Accept", "application/json")
 	
 	// Add Basic Authentication credentials
-	withCredentials([usernamePassword(credentialsId: 'MY-SAP-TRIAL', passwordVariable: 'pass', usernameVariable: 'user')]) {
-    // the code here can access $pass and $user
-		basicAuth := $user + ":" + $pass
+	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
+	if serviceKey != nil {
+		basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
 		authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
-		header.Add("Authorization", authHeader)
-	
+		header.Add("Authorization", authHeader)	
 	}
-
+	
 	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 	deployStatusResp, httpErr := httpClient.SendRequest(httpMethod, deployStatusURL, nil, header, nil)
 
