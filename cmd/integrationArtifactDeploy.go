@@ -177,8 +177,9 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 		basicAuth := $user + ":" + $pass
 		authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
 		header.Add("Authorization", authHeader)
-	}	
 	
+	}
+
 	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 	deployStatusResp, httpErr := httpClient.SendRequest(httpMethod, deployStatusURL, nil, header, nil)
 
