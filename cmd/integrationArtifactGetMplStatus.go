@@ -123,13 +123,13 @@ func getIntegrationArtifactMPLError(commonPipelineEnvironment *integrationArtifa
 	header := make(http.Header)
 	header.Add("content-type", "application/json")
 	
-	// Add Basic Authentication credentials
-	withCredentials([usernamePassword(credentialsId: 'MY-SAP-TRIAL', passwordVariable: 'pass', usernameVariable: 'user')]) {
-    // the code here can access $pass and $user
-		basicAuth := $user + ":" + $pass
-		authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
-		header.Add("Authorization", authHeader)
-	}	
+	// // Add Basic Authentication credentials
+	// withCredentials([usernamePassword(credentialsId: 'MY-SAP-TRIAL', passwordVariable: 'pass', usernameVariable: 'user')]) {
+  //   // the code here can access $pass and $user
+	// 	basicAuth := $user + ":" + $pass
+	// 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	// 	header.Add("Authorization", authHeader)
+	// }	
 
 	errorStatusURL := fmt.Sprintf("%s/api/v1/MessageProcessingLogs('%s')/ErrorInformation/$value", apiHost, mplID)
 	errorStatusResp, httpErr := httpClient.SendRequest(httpMethod, errorStatusURL, nil, header, nil)
