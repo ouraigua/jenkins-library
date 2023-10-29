@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 	"time"
-	// "encoding/base64"
+	"encoding/base64"
 
 	"github.com/Jeffail/gabs/v2"
 	"github.com/SAP/jenkins-library/pkg/command"
@@ -168,10 +168,10 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	// clientOptions := piperhttp.ClientOptions{}
 	// header := make(http.Header)
 	// header.Add("Accept", "application/json")
-	// serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
-	// if err != nil {
-	// 	return "ERROR", err
-	// }
+	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
+	if err != nil {
+		return "ERROR", err
+	}
 	// deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 
 	// tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
@@ -197,9 +197,9 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	header.Add("Accept", "application/json")
 
 	// Set your Basic Authentication credentials
-	// basicAuth := "P2007437277" + ":" + "CHANGE_ME"
-	// authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
-	// header.Add("Authorization", authHeader)
+	basicAuth := serviceKey.OAuth.username + ":" + serviceKey.OAuth.password
+	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	header.Add("Authorization", authHeader)
 
 	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 	deployStatusResp, httpErr := httpClient.SendRequest(httpMethod, deployStatusURL, nil, header, nil)
