@@ -174,7 +174,7 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 	// Add Basic Authentication credentials
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
 	if err != nil {
-		return err
+		return "ERROR", err
 	}
 
 	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
