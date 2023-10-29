@@ -57,11 +57,13 @@ func runIntegrationArtifactGetMplStatus(
 
 	// Add Basic Authentication credentials
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
-	if serviceKey != nil {
-		basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
-		authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
-		header.Add("Authorization", authHeader)	
+	if err != nil {
+		return err
 	}
+
+	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
+	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	header.Add("Authorization", authHeader)
 	
 	mplStatusEncodedURL := fmt.Sprintf("%s/api/v1/MessageProcessingLogs?$filter=IntegrationArtifact/Id"+url.QueryEscape(" eq ")+"'%s'"+
 		url.QueryEscape(" and Status ne ")+"'DISCARDED'"+"&$orderby="+url.QueryEscape("LogEnd desc")+"&$top=1", serviceKey.OAuth.Host, config.IntegrationFlowID)
