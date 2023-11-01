@@ -4,9 +4,13 @@ import groovy.transform.Field
 @Field String METADATA_FILE = 'metadata/integrationArtifactDownload.yaml'
 
 void call(Map parameters = [:]) {
-    def artifact = parameters.artifact ?: 'TestFlow'
     List credentials = [
         [type: 'token', id: 'cpiApiServiceKeyCredentialsId', env: ['PIPER_apiServiceKey']]
     ]
+
+    // Access the 'integrationFlowId' parameter from the 'parameters' map
+    String integrationFlowId = parameters.integrationFlowId ?: 'DefaultIntegrationFlowId'
+
+
     piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
 }
