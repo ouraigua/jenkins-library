@@ -10,7 +10,7 @@ void call(Map parameters = [:]) {
 
     // Access the 'integrationFlowId' parameter from the 'parameters' map
     String integrationFlowId = parameters.integrationFlowId ?: 'TestFlow'
-    String savePath = parameters.savePath ?: 'TestFlow.zip'
+    String integrationFlowPath = parameters.integrationFlowPath ?: 'TestFlow.zip'
 
     piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
 }
