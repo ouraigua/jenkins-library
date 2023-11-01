@@ -9,7 +9,7 @@ void call(Map parameters = [:]) {
     ]
 
     // Access the 'integrationFlowId' parameter from the 'parameters' map
-    String IntegrationFlowId = parameters.IntegrationFlowId ?: 'TestFlow'
+    String integrationFlowId = parameters.integrationFlowId ?: 'TestFlow'
     // String integrationFlowPath = parameters.integrationFlowPath ?: 'TestFlow.zip'
 
 
