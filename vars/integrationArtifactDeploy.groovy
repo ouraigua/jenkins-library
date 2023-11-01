@@ -7,5 +7,9 @@ void call(Map parameters = [:]) {
     List credentials = [
         [type: 'token', id: 'cpiApiServiceKeyCredentialsId', env: ['PIPER_apiServiceKey']]
     ]
+    
+    // Access the 'integrationFlowId' parameter from the 'parameters' map
+    String artifactName = parameters.artifactName ?: 'TestFlow'
+
     piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
 }
