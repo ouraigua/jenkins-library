@@ -9,7 +9,7 @@ void call(Map parameters = [:]) {
     ]
 
     // Access the 'integrationFlowId' parameter from the 'parameters' map
-    String artifactName = parameters.artifactName ?: 'TestFlow'
-    
+    String integrationFlowId = parameters.integrationFlowId ?: 'TestFlow'
+
     piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
 }
