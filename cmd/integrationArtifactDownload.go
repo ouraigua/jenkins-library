@@ -15,6 +15,12 @@ import (
 	"github.com/pkg/errors"
 )
 
+// def call(Map parameters) {
+//     def artifact = parameters.artifact ?: 'Undefined'
+//     // Your custom step logic here, using integrationFlowId
+// }
+
+
 func integrationArtifactDownload(config integrationArtifactDownloadOptions, telemetryData *telemetry.CustomData) {
 	// Utils can be used wherever the command.ExecRunner interface is expected.
 	// It can also be used for example as a mavenExecRunner.
