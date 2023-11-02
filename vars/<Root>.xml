@@ -1,0 +1,35 @@
+<Root>
+	<StatementName>
+		<storedProcedureName action="EXECUTE">
+			<table><SplitXMLData_And_Insert></table>
+			<inputXml isInput="true" type="CLOB"><![CDATA[<Root>
+    <FA_KOPF>
+        <FANummer>11</FANummer>
+        <FATyp>22</FATyp>
+        <FAArt>33</FAArt>
+        <FAQuantity>44</FAQuantity>
+        <FAUOM>55</FAUOM>
+        <PlanNr>66</PlanNr>
+        <BomNr>77</BomNr>
+        <BomVariante>88</BomVariante>
+        <MaterialNr>99</MaterialNr>
+        <CustomerOrderNr>AA</CustomerOrderNr>
+        <CustomerOrderPos>BB</CustomerOrderPos>
+        <Disponent>CC</Disponent>
+        <StartDatum>DD</StartDatum>
+        <StartZeit>EE</StartZeit>
+        <EndDatum>FF</EndDatum>
+        <EndZeit>GG</EndZeit>
+        <FAID>HH</FAID>
+    </FA_KOPF>
+    <FA_VORGANGE>
+        <FAID>AAAAA</FAID>
+        <OperationNr>BBBBB</OperationNr>
+        <OperationDesc>CCCCC</OperationDesc>
+        <Quantitiy>DDDDD</Quantitiy>
+        <UnitOfMeasure>GGGGG</UnitOfMeasure>
+    </FA_VORGANGE>
+</Root>]]></inputXml>
+		</storedProcedureName >
+	</StatementName>
+</Root>
