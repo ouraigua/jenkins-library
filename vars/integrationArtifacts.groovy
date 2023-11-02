@@ -14,7 +14,6 @@ def call(String packageName) {
     String username = "S0025779172"
     String password = "zyThaf-zorjon-0zurdo"
     String API_ENDPOINT = "5fce2be4trial.it-cpitrial06.cfapps.us10-001.hana.ondemand.com"
-    API_ENDPOINT = "c5aa4a83trial.it-cpitrial06.cfapps.us10-001.hana.ondemand.com"
     String apiUrl = "https://$API_ENDPOINT/api/v1/IntegrationPackages('$packageName')/IntegrationDesigntimeArtifacts"
 
     def httpClient = HttpClients.createDefault()
