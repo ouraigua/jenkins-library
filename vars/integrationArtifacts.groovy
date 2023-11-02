@@ -8,7 +8,7 @@ import groovy.xml.*
 def call(String packageName) {
     // Any valid steps can be called from this code, just like
     // in a Scripted Pipeline
-    echo "[-------- ERROR --------]: ${message}"
+    echo "[-------- using package --------]: ${packageName}"
 
 
     String username = "S0025779172"
