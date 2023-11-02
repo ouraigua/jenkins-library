@@ -5,7 +5,7 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import groovy.xml.*
 
-def call(String message) {
+def call(String packageName) {
     // Any valid steps can be called from this code, just like
     // in a Scripted Pipeline
     echo "[-------- ERROR --------]: ${message}"
