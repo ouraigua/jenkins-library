@@ -23,7 +23,7 @@ def call(String username, String password, String apiEndpoint, String packageNam
         def root = new XmlSlurper().parseText(responseBody)
         def properties = root."**".findAll { it.name() == 'properties' }
         properties.each { property ->
-          output << property.Name
+          output << property.Name as String
           echo "---> ${property.Name}"
         }
       } else {
