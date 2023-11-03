@@ -14,7 +14,7 @@ def call(String username, String password, String apiEndpoint, String packageNam
     def httpGet = new HttpGet(apiUrl) 
     def credentials = "${username}:${password}".bytes.encodeBase64().toString()
     httpGet.setHeader("Authorization", "Basic ${credentials}")
-    def output = []
+    // def output = []
     try {
       HttpResponse response = httpClient.execute(httpGet)
       if (response.statusLine.statusCode == 200) {
@@ -22,7 +22,7 @@ def call(String username, String password, String apiEndpoint, String packageNam
         def root = new XmlSlurper().parseText(responseBody)
         def properties = root."**".findAll { it.name() == 'properties' }
         properties.each { property ->
-          output << property.Name
+          // output << property.Name
           result << property.Name
           echo "---> ${property.Name}"
         }
@@ -34,5 +34,5 @@ def call(String username, String password, String apiEndpoint, String packageNam
       httpClient.close()
     }
 
-    return output
+    // return output
 }
