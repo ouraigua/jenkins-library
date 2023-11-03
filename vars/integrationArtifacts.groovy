@@ -24,7 +24,7 @@ def call(String username, String password, String apiEndpoint, String packageNam
 
         xmlParser.'**'.each { node ->
           if (node.name() == 'Name') {
-            echo "---> ${node.text()}"
+            // echo "---> ${node.text()}"
             output << node.text()
           }
         }
