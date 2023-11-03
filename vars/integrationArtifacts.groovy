@@ -5,7 +5,7 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import groovy.xml.*
 
-def call(String username, String password, String apiEndpoint, String packageName, String[] result) {
+def call(String username, String password, String apiEndpoint, String packageName, result) {
     echo "[-------- Getting all artifacts for package: $packageName --------]"
 
     String apiUrl = "https://$apiEndpoint/api/v1/IntegrationPackages('$packageName')/IntegrationDesigntimeArtifacts"
@@ -23,7 +23,7 @@ def call(String username, String password, String apiEndpoint, String packageNam
         def properties = root."**".findAll { it.name() == 'properties' }
         properties.each { property ->
           // output << property.Name
-          result << property.Name
+          result as String[] << property.Name
           echo "---> ${property.Name}"
         }
       } else {
