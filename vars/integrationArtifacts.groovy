@@ -23,7 +23,7 @@ def call(String username, String password, String apiEndpoint, String packageNam
         def properties = root."**".findAll { it.name() == 'properties' }
         properties.each { property ->
           // output << property.Name
-          result as String[] << property.Name
+          (result as String[]) << property.Name
           echo "---> ${property.Name}"
         }
       } else {
