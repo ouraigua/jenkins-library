@@ -5,21 +5,16 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import groovy.xml.*
 
-def call(String packageName) {
-    // Any valid steps can be called from this code, just like
-    // in a Scripted Pipeline
-    echo "[-------- using package --------]: ${packageName}"
+def call(String username, String password, String apiEndpoint, String packageName) {
+    echo "[-------- Getting all artifacts for package: $packageName --------]"
 
-
-    String username = "S0025779172"
-    String password = "zyThaf-zorjon-0zurdo"
-    String API_ENDPOINT = "5fce2be4trial.it-cpitrial06.cfapps.us10-001.hana.ondemand.com"
-    String apiUrl = "https://$API_ENDPOINT/api/v1/IntegrationPackages('$packageName')/IntegrationDesigntimeArtifacts"
+    String apiUrl = "https://$apiEndpoint/api/v1/IntegrationPackages('$packageName')/IntegrationDesigntimeArtifacts"
 
     def httpClient = HttpClients.createDefault()
-    def httpGet = new HttpGet(apiUrl)
+    def httpGet = new HttpGet(apiUrl) 
     def credentials = "${username}:${password}".bytes.encodeBase64().toString()
     httpGet.setHeader("Authorization", "Basic ${credentials}")
+    def output = []
     try {
       HttpResponse response = httpClient.execute(httpGet)
       if (response.statusLine.statusCode == 200) {
@@ -27,14 +22,16 @@ def call(String packageName) {
         def root = new XmlSlurper().parseText(responseBody)
         def properties = root."**".findAll { it.name() == 'properties' }
         properties.each { property ->
-          println(property.Name)
-          echo "SARAH: ${property.Name}"
+          output << property.Name
+          echo "---> ${property.Name}"
         }
       } else {
-        println("Request failed with status code: ${response.statusLine.statusCode}")
+        echo "Request failed with status code: ${response.statusLine.statusCode}"
       }
     } finally {
       // Close the HTTP client
       httpClient.close()
     }
+
+    return output
 }
