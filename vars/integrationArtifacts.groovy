@@ -21,11 +21,14 @@ def call(String username, String password, String apiEndpoint, String packageNam
       if (response.statusLine.statusCode == 200) {
         def responseBody = EntityUtils.toString(response.entity)
         def root = new XmlSlurper().parseText(responseBody)
-        def properties = root."**".findAll { it.name() == 'properties' }
-        properties.each { property ->
-          output << property.Name as String
-          echo "---> ${property.Name}"
-        }
+
+        // def properties = root."**".findAll { it.name() == 'properties' }
+        // properties.each { property ->
+        //   output << property.Name as String
+        //   echo "---> ${property.Name}"
+        // }
+
+        output = ['TestFlow','ARDEX_REPORT_odata_to_csv']
       } else {
         echo "Request failed with status code: ${response.statusLine.statusCode}"
       }
