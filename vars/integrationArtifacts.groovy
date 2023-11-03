@@ -8,7 +8,7 @@ import groovy.xml.*
 def call(String username, String password, String apiEndpoint, String packageName) {
     echo "[-------- Getting all artifacts for package: $packageName --------]"
 
-    String apiUrl = "https://$apiEndpoint/api/v1/IntegrationPackages('$packageName')/IntegrationDesigntimeArtifacts"
+    String apiUrl = "$apiEndpoint/api/v1/IntegrationPackages('$packageName')/IntegrationDesigntimeArtifacts"
 
     def httpClient = HttpClients.createDefault()
     def httpGet = new HttpGet(apiUrl) 
