@@ -219,6 +219,11 @@ func getIntegrationArtifactDeployError(config *integrationArtifactDeployOptions,
 	httpMethod := "GET"
 	header := make(http.Header)
 	header.Add("content-type", "application/json")
+
+	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
+	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	header.Add("Authorization", authHeader)
+	
 	errorStatusURL := fmt.Sprintf("%s/api/v1/IntegrationRuntimeArtifacts('%s')/ErrorInformation/$value", apiHost, config.IntegrationFlowID)
 	errorStatusResp, httpErr := httpClient.SendRequest(httpMethod, errorStatusURL, nil, header, nil)
 
