@@ -23,7 +23,7 @@ def call(String username, String password, String apiEndpoint, String packageNam
         def xmlParser = new XmlSlurper().parseText(responseBody)
 
         xmlParser.'**'.each { node ->
-          if (node.name() == 'Name') {
+          if (node.name() == 'Id') {
             // echo "---> ${node.text()}"
             output << node.text()
           }
