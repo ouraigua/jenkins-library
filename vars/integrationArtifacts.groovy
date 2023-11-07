@@ -5,10 +5,10 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import groovy.xml.*
 
-def call(String username, String password, String apiEndpoint, String packageName) {
-    echo "[-------- Getting all artifacts for package: $packageName --------]"
+def call(String username, String password, String apiEndpoint, String packageId) {
+    echo "[-------- Getting all artifacts for package: $packageId --------]"
 
-    String apiUrl = "$apiEndpoint/api/v1/IntegrationPackages('$packageName')/IntegrationDesigntimeArtifacts"
+    String apiUrl = "$apiEndpoint/api/v1/IntegrationPackages('$packageId')/IntegrationDesigntimeArtifacts"
 
     def httpClient = HttpClients.createDefault()
     def httpGet = new HttpGet(apiUrl) 
