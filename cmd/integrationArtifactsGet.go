@@ -67,13 +67,13 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	if err != nil {
 		return nil, err
 	}
-	
+
 	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
 	header.Add("Authorization", authHeader)
 
 	getArtifactsURL := fmt.Sprintf("%s/api/v1/IntegrationPackages('%s')/IntegrationDesigntimeArtifacts", serviceKey.OAuth.Host, config.PackageID)
-	
+
 	// clientOptions := piperhttp.ClientOptions{}
 	// tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
 	// token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
@@ -82,8 +82,6 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	// }
 	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
 	// httpClient.SetOptions(clientOptions)
-	
-	
 
 	httpMethod := "GET"
 	response, httpErr := httpClient.SendRequest(httpMethod, getArtifactsURL, nil, header, nil)
@@ -93,7 +91,6 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	if response == nil {
 		return nil, errors.Errorf("did not retrieve a HTTP response: %v", httpErr)
 	}
-
 
 	if response != nil && response.Body != nil {
 		defer response.Body.Close()
