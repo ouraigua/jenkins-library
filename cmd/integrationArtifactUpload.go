@@ -40,6 +40,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 	if err != nil {
 		return err
 	}
+	
 
 	clientOptions := piperhttp.ClientOptions{}
 	header := make(http.Header)
