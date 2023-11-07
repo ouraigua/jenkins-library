@@ -60,7 +60,7 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	if err != nil {
 		return nil, err
 	}
-	getArtifactsURL := fmt.Sprintf("%s/api/v1/IntegrationPackages('%s')/IntegrationDesigntimeArtifacts", serviceKey.OAuth.Host, config.PackageId)
+	getArtifactsURL := fmt.Sprintf("%s/api/v1/IntegrationPackages('%s')/IntegrationDesigntimeArtifacts", serviceKey.OAuth.Host, config.PackageID)
 	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
 	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
 	if err != nil {
@@ -99,5 +99,5 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 		return output, nil
 	}
 
-	return nil, errors.Errorf("get integration artifacts by package id: %v failed, Response Status code: %v", config.PackageId, response.StatusCode)
+	return nil, errors.Errorf("get integration artifacts by package id: %v failed, Response Status code: %v", config.PackageID, response.StatusCode)
 }
