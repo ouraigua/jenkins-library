@@ -56,18 +56,28 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	clientOptions := piperhttp.ClientOptions{}
 	header := make(http.Header)
 	header.Add("Accept", "application/zip")
+
+	// Add Basic Authentication credentials
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
 	if err != nil {
 		return nil, err
 	}
+
+	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
+	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+	header.Add("Authorization", authHeader)
+
 	getArtifactsURL := fmt.Sprintf("%s/api/v1/IntegrationPackages('%s')/IntegrationDesigntimeArtifacts", serviceKey.OAuth.Host, config.PackageID)
-	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
-	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to fetch Bearer Token")
-	}
-	clientOptions.Token = fmt.Sprintf("Bearer %s", token)
-	httpClient.SetOptions(clientOptions)
+	
+	// tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
+	// token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
+	// if err != nil {
+	// 	return nil, errors.Wrap(err, "failed to fetch Bearer Token")
+	// }
+	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
+	// httpClient.SetOptions(clientOptions)
+	
+
 	httpMethod := "GET"
 	response, httpErr := httpClient.SendRequest(httpMethod, getArtifactsURL, nil, header, nil)
 	if httpErr != nil {
