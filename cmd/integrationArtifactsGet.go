@@ -105,8 +105,9 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 			return nil, errors.Wrapf(readErr, "HTTP response body could not be read, Response status code : %v", response.StatusCode)
 		}
 
-		fmt.Printf("%s", responseBody)
+		// fmt.Printf("%s", responseBody)
 		ids := getDIdValues(string(responseBody))
+		fmt.Println("We got these artifacts: ", ids)
 		return ids, nil
 	}
 
