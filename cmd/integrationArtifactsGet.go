@@ -62,7 +62,7 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	if err != nil {
 		return nil, err
 	}
-
+	
 	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
 	header.Add("Authorization", authHeader)
@@ -78,6 +78,10 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
 	// httpClient.SetOptions(clientOptions)
 	
+	log.Entry().
+			WithField("Get packages", serviceKey.OAuth.Username).
+			Info("JALAL JALAL")
+
 
 	httpMethod := "GET"
 	response, httpErr := httpClient.SendRequest(httpMethod, getArtifactsURL, nil, header, nil)
