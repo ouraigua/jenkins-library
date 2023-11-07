@@ -67,25 +67,14 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		log.Entry().
 			WithField("PackageID", config.PackageID).
 			Info("PackageId DOES NOT exist...")
-		/*
-		header2 := make(http.Header)
-		header2.Add("Accept", "application/json")
-		httpClient2 := &piperhttp.Client{}
-
-		tokenParameters2 := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
-		token2, err := cpi.CommonUtils.GetBearerToken(tokenParameters2)
-		if err != nil {
-			return errors.Wrap(err, "failed to fetch Bearer Token")
-		}
-		clientOptions2 := piperhttp.ClientOptions{}
-		clientOptions2.Token = fmt.Sprintf("Bearer %s", token2)
-		httpClient2.SetOptions(clientOptions2)
+		
+		
 		
 		// basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
 		// authHeader := "Basic " + b64.StdEncoding.EncodeToString([]byte(basicAuth))
 		// header2.Add("Authorization", authHeader)
 
-		httpMethod2 := "POST"
+		httpMethod := "POST"
 		
 		createPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages", serviceKey.OAuth.Host)
 		payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
@@ -93,7 +82,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 			return errors.Wrapf(jsonError, "Failed to get json payload for package %v, failed with error", config.PackageID)
 		}
 
-		createPackageResp, httpErr := httpClient2.SendRequest(httpMethod2, createPackageURL, payload, header2, nil)
+		createPackageResp, httpErr := httpClient.SendRequest(httpMethod, createPackageURL, payload, header, nil)
 
 		if createPackageResp != nil && createPackageResp.Body != nil {
 			defer createPackageResp.Body.Close()
@@ -112,13 +101,13 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 				WithField("PackageID", config.PackageID).
 				Info("------------>")
 		}
-		*/
+
 	}
 
 
 	//Check availability of integration artefact in CPI design time
 	iFlowStatusServiceURL := fmt.Sprintf("%s/api/v1/IntegrationDesigntimeArtifacts(Id='%s',Version='%s')", serviceKey.OAuth.Host, config.IntegrationFlowID, "Active")
-	iFlowStatusResp, httpErr := httpClient.SendRequest(httpMethod, iFlowStatusServiceURL, nil, header, nil)
+	iFlowStatusResp, httpErr := httpClient.SendRequest("GET", iFlowStatusServiceURL, nil, header, nil)
 
 	if iFlowStatusResp != nil && iFlowStatusResp.Body != nil {
 		defer iFlowStatusResp.Body.Close()
