@@ -59,10 +59,14 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 	if integrationPackageResp != nil && integrationPackageResp.Body != nil {
 		defer integrationPackageResp.Body.Close()
 	}
-	if integrationPackageResp.StatusCode != 200 {
+	if integrationPackageResp.StatusCode == 200 {
 		log.Entry().
 			WithField("PackageID", config.PackageID).
-			Info("PackageId doesn't exist...")
+			Info("PackageId DOES exist...")
+	} else {
+		log.Entry().
+			WithField("PackageID", config.PackageID).
+			Info("PackageId DOES NOT exist...")
 	}
 
 
