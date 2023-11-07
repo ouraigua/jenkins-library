@@ -40,7 +40,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 	if err != nil {
 		return err
 	}
-	
+
 
 	clientOptions := piperhttp.ClientOptions{}
 	header := make(http.Header)
@@ -74,7 +74,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		httpClient2 := &piperhttp.Client{}
 		// httpClient2.SetOptions(clientOptions)
 		basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
-		authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+		authHeader := "Basic " + b64.StdEncoding.EncodeToString([]byte(basicAuth))
 		header2.Add("Authorization", authHeader)
 
 		httpMethod2 := "POST"
