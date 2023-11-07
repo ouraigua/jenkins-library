@@ -189,6 +189,7 @@ public class CommonStepsTest extends BasePiperTest{
         'terraformExecute', //implementing new golang pattern without fields
         'whitesourceExecuteScan', //implementing new golang pattern without fields
         'uiVeri5ExecuteTests', //implementing new golang pattern without fields
+        'integrationArtifactsGet', //
         'integrationArtifactDeploy', //implementing new golang pattern without fields
         'integrationArtifactUpdateConfiguration', //implementing new golang pattern without fields
         'integrationArtifactGetMplStatus', //implementing new golang pattern without fields
