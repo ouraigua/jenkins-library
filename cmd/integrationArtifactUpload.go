@@ -54,16 +54,16 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 	httpMethod := "GET"
 
 	// Jalal Addition
-	integrationPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages(Id='%s')", serviceKey.OAuth.Host, config.PackageID)
-	integrationPackageResp, httpErr := httpClient.SendRequest(httpMethod, integrationPackageURL, nil, header, nil)
-	if integrationPackageResp != nil && integrationPackageResp.Body != nil {
-		defer integrationPackageResp.Body.Close()
-	}
-	if integrationPackageResp.StatusCode != 200 {
-		log.Entry().
-			WithField("PackageID", config.PackageID).
-			Info("PackageId doesn't exist...")
-	}
+	// integrationPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages(Id='%s')", serviceKey.OAuth.Host, config.PackageID)
+	// integrationPackageResp, httpErr := httpClient.SendRequest(httpMethod, integrationPackageURL, nil, header, nil)
+	// if integrationPackageResp != nil && integrationPackageResp.Body != nil {
+	// 	defer integrationPackageResp.Body.Close()
+	// }
+	// if integrationPackageResp.StatusCode != 200 {
+	// 	log.Entry().
+	// 		WithField("PackageID", config.PackageID).
+	// 		Info("PackageId doesn't exist...")
+	// }
 
 
 	//Check availability of integration artefact in CPI design time
