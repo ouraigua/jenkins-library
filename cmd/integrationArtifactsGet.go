@@ -60,8 +60,8 @@ func getDIdValues(xmlData string) []string {
 func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetryData *telemetry.CustomData, httpClient piperhttp.Sender) ([]string, error) {
 
 	header := make(http.Header)
-	header.Add("content-type", "application/json")
-	header.Add("Accept", "application/json")
+	header.Add("content-type", "application/xml")
+	// header.Add("Accept", "application/json")
 
 	// Add Basic Authentication credentials
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
