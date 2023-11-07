@@ -44,7 +44,6 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 	clientOptions := piperhttp.ClientOptions{}
 	header := make(http.Header)
 	header.Add("Accept", "application/json")
-	iFlowStatusServiceURL := fmt.Sprintf("%s/api/v1/IntegrationDesigntimeArtifacts(Id='%s',Version='%s')", serviceKey.OAuth.Host, config.IntegrationFlowID, "Active")
 	tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
 	token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
 	if err != nil {
@@ -54,7 +53,21 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 	httpClient.SetOptions(clientOptions)
 	httpMethod := "GET"
 
+	// Jalal Addition
+	integrationPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages(Id='%s')", serviceKey.OAuth.Host, config.PackageID)
+	integrationPackageResp, httpErr := httpClient.SendRequest(httpMethod, integrationPackageURL, nil, header, nil)
+	if integrationPackageResp != nil && integrationPackageResp.Body != nil {
+		defer integrationPackageResp.Body.Close()
+	}
+	if integrationPackageResp.StatusCode != 200 {
+		log.Entry().
+			WithField("PackageID", config.PackageID).
+			Info("PackageId doesn't exist...")
+	}
+
+
 	//Check availability of integration artefact in CPI design time
+	iFlowStatusServiceURL := fmt.Sprintf("%s/api/v1/IntegrationDesigntimeArtifacts(Id='%s',Version='%s')", serviceKey.OAuth.Host, config.IntegrationFlowID, "Active")
 	iFlowStatusResp, httpErr := httpClient.SendRequest(httpMethod, iFlowStatusServiceURL, nil, header, nil)
 
 	if iFlowStatusResp != nil && iFlowStatusResp.Body != nil {
