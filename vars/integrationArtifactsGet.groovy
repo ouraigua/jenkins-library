@@ -8,5 +8,5 @@ void call(Map parameters = [:]) {
         [type: 'token', id: 'cpiApiServiceKeyCredentialsId', env: ['PIPER_apiServiceKey']]
     ]
 
-    piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
+    return piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
 }
