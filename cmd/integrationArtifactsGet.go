@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"regexp"
 
 	"github.com/SAP/jenkins-library/pkg/cpi"
 	piperhttp "github.com/SAP/jenkins-library/pkg/http"
@@ -13,20 +14,6 @@ import (
 	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/pkg/errors"
 )
-
-// import (
-// 	"bytes"
-// 	"encoding/base64"
-
-// 	"fmt"
-// 	"io/ioutil"
-// 	"net/http"
-// )
-
-type XMLResult struct {
-	XMLName xml.Name `xml:"result"`
-	Ids     []string `xml:"Id"`
-}
 
 // def call(Map parameters) {
 //     def artifact = parameters.artifact ?: 'Undefined'
@@ -50,6 +37,25 @@ func integrationArtifactsGet(config integrationArtifactsGetOptions, telemetryDat
 	}
 
 	return output
+}
+
+func getDIdValues(xmlData string) []string {
+	// Define the regular expression pattern to match <d:Id> tags
+	pattern := `<d:Id>(.*?)<\/d:Id>`
+	re := regexp.MustCompile(pattern)
+
+	// Find all matches in the XML data
+	matches := re.FindAllStringSubmatch(xmlData, -1)
+
+	// Extract and store the matched values in a list
+	var ids []string
+	for _, match := range matches {
+		if len(match) >= 2 {
+			ids = append(ids, match[1])
+		}
+	}
+
+	return ids
 }
 
 func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetryData *telemetry.CustomData, httpClient piperhttp.Sender) ([]string, error) {
@@ -90,7 +96,6 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 		return nil, errors.Errorf("did not retrieve a HTTP response: %v", httpErr)
 	}
 
-	output := []string{}
 
 	if response != nil && response.Body != nil {
 		defer response.Body.Close()
@@ -102,14 +107,8 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 			return nil, errors.Wrapf(readErr, "HTTP response body could not be read, Response status code : %v", response.StatusCode)
 		}
 
-		var result XMLResult
-		err = xml.Unmarshal(responseBody, &result)
-		if err != nil {
-			return nil, errors.Errorf("Error parsing XML: %v\n", err)
-		}
-
-		output = result.Ids
-		return output, nil
+		ids := getDIdValues(string(responseBody))
+		return ids, nil
 	}
 
 	return nil, errors.Errorf("get integration artifacts by package id: %v failed, Response Status code: %v", config.PackageID, response.StatusCode)
