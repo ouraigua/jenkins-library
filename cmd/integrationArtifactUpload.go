@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"bytes"
-	"encoding/base64"
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
