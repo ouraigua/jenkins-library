@@ -55,7 +55,8 @@ func integrationArtifactsGet(config integrationArtifactsGetOptions, telemetryDat
 func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetryData *telemetry.CustomData, httpClient piperhttp.Sender) ([]string, error) {
 
 	header := make(http.Header)
-	header.Add("Accept", "application/zip")
+	header.Add("content-type", "application/json")
+	header.Add("Accept", "application/json")
 
 	// Add Basic Authentication credentials
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
@@ -78,10 +79,7 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
 	// httpClient.SetOptions(clientOptions)
 	
-	log.Entry().
-			WithField("Get packages", serviceKey.OAuth.Username).
-			Info("JALAL JALAL: %s", serviceKey.OAuth.Username)
-
+	
 
 	httpMethod := "GET"
 	response, httpErr := httpClient.SendRequest(httpMethod, getArtifactsURL, nil, header, nil)
