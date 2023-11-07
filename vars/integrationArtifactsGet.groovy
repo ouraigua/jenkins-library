@@ -8,5 +8,7 @@ void call(Map parameters = [:]) {
         [type: 'token', id: 'cpiApiServiceKeyCredentialsId', env: ['PIPER_apiServiceKey']]
     ]
 
-    return piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
+    def output = piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
+    echo "Got artifacts: $output"
+    return output
 }
