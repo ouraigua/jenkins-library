@@ -31,3 +31,9 @@ spec:
           - STAGES
           - STEPS
         mandatory: true
+  outputs:
+    resources:
+      - name: commonPipelineEnvironment
+        type: piperEnvironment
+        params:
+          - name: custom/artifacts

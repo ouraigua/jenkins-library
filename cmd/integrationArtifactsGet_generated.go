@@ -5,10 +5,12 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
+	"github.com/SAP/jenkins-library/pkg/piperenv"
 	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
@@ -20,6 +22,34 @@ type integrationArtifactsGetOptions struct {
 	PackageID     string `json:"packageId,omitempty"`
 }
 
+type integrationArtifactsGetCommonPipelineEnvironment struct {
+	custom struct {
+		artifacts string
+	}
+}
+
+func (p *integrationArtifactsGetCommonPipelineEnvironment) persist(path, resourceName string) {
+	content := []struct {
+		category string
+		name     string
+		value    interface{}
+	}{
+		{category: "custom", name: "artifacts", value: p.custom.artifacts},
+	}
+
+	errCount := 0
+	for _, param := range content {
+		err := piperenv.SetResourceParameter(path, resourceName, filepath.Join(param.category, param.name), param.value)
+		if err != nil {
+			log.Entry().WithError(err).Error("Error persisting piper environment.")
+			errCount++
+		}
+	}
+	if errCount > 0 {
+		log.Entry().Error("failed to persist Piper environment")
+	}
+}
+
 // IntegrationArtifactsGetCommand Get all integration flows of an integration package by package Id.
 func IntegrationArtifactsGetCommand() *cobra.Command {
 	const STEP_NAME = "integrationArtifactsGet"
@@ -27,6 +57,7 @@ func IntegrationArtifactsGetCommand() *cobra.Command {
 	metadata := integrationArtifactsGetMetadata()
 	var stepConfig integrationArtifactsGetOptions
 	var startTime time.Time
+	var commonPipelineEnvironment integrationArtifactsGetCommonPipelineEnvironment
 	var logCollector *log.CollectorHook
 	var splunkClient *splunk.Splunk
 	telemetryClient := &telemetry.Telemetry{}
@@ -83,6 +114,7 @@ func IntegrationArtifactsGetCommand() *cobra.Command {
 			stepTelemetryData := telemetry.CustomData{}
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
+				commonPipelineEnvironment.persist(GeneralConfig.EnvRootPath, "commonPipelineEnvironment")
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
 				stepTelemetryData.ErrorCategory = log.GetErrorCategory().String()
@@ -109,7 +141,7 @@ func IntegrationArtifactsGetCommand() *cobra.Command {
 			log.DeferExitHandler(handler)
 			defer handler()
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
-			integrationArtifactsGet(stepConfig, &stepTelemetryData)
+			integrationArtifactsGet(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
 			log.Entry().Info("SUCCESS")
 		},
@@ -164,6 +196,17 @@ func integrationArtifactsGetMetadata() config.StepData {
 						Mandatory:   true,
 						Aliases:     []config.Alias{},
 						Default:     os.Getenv("PIPER_packageId"),
+					},
+				},
+			},
+			Outputs: config.StepOutputs{
+				Resources: []config.StepResources{
+					{
+						Name: "commonPipelineEnvironment",
+						Type: "piperEnvironment",
+						Parameters: []map[string]interface{}{
+							{"name": "custom/artifacts"},
+						},
 					},
 				},
 			},

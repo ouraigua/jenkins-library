@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/SAP/jenkins-library/pkg/cpi"
 	piperhttp "github.com/SAP/jenkins-library/pkg/http"
@@ -19,7 +20,9 @@ import (
 //     // Your custom step logic here, using integrationFlowId
 // }
 
-func integrationArtifactsGet(config integrationArtifactsGetOptions, telemetryData *telemetry.CustomData) []string {
+func integrationArtifactsGet(config integrationArtifactsGetOptions,
+	telemetryData *telemetry.CustomData,
+	commonPipelineEnvironment *integrationArtifactsGetCommonPipelineEnvironment) {
 	// Utils can be used wherever the command.ExecRunner interface is expected.
 	// It can also be used for example as a mavenExecRunner.
 	httpClient := &piperhttp.Client{}
@@ -30,15 +33,14 @@ func integrationArtifactsGet(config integrationArtifactsGetOptions, telemetryDat
 
 	// Error situations should be bubbled up until they reach the line below which will then stop execution
 	// through the log.Entry().Fatal() call leading to an os.Exit(1) in the end.
-	output, err := runIntegrationArtifactsGet(&config, telemetryData, httpClient)
+	err := runIntegrationArtifactsGet(&config, telemetryData, httpClient, commonPipelineEnvironment)
 	if err != nil {
 		log.Entry().WithError(err).Fatal("step execution failed")
 	}
 
-	return output
 }
 
-func getDIdValues(xmlData string) []string {
+func getDIdValues(xmlData string) string {
 	// Define the regular expression pattern to match <d:Id> tags
 	pattern := `<d:Id>(.*?)<\/d:Id>`
 	re := regexp.MustCompile(pattern)
@@ -54,10 +56,14 @@ func getDIdValues(xmlData string) []string {
 		}
 	}
 
-	return ids
+	result := strings.Join(ids, ";")
+	return result
 }
 
-func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetryData *telemetry.CustomData, httpClient piperhttp.Sender) ([]string, error) {
+func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions,
+	telemetryData *telemetry.CustomData,
+	httpClient piperhttp.Sender,
+	commonPipelineEnvironment *integrationArtifactsGetCommonPipelineEnvironment) error {
 
 	header := make(http.Header)
 	header.Add("content-type", "application/xml")
@@ -65,7 +71,7 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	// Add Basic Authentication credentials
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
@@ -86,10 +92,10 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	httpMethod := "GET"
 	response, httpErr := httpClient.SendRequest(httpMethod, getArtifactsURL, nil, header, nil)
 	if httpErr != nil {
-		return nil, errors.Wrapf(httpErr, "HTTP %v request to %v failed with error", httpMethod, getArtifactsURL)
+		return errors.Wrapf(httpErr, "HTTP %v request to %v failed with error", httpMethod, getArtifactsURL)
 	}
 	if response == nil {
-		return nil, errors.Errorf("did not retrieve a HTTP response: %v", httpErr)
+		return errors.Errorf("did not retrieve a HTTP response: %v", httpErr)
 	}
 
 	if response != nil && response.Body != nil {
@@ -99,14 +105,15 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	if response.StatusCode == 200 {
 		responseBody, readErr := io.ReadAll(response.Body)
 		if readErr != nil {
-			return nil, errors.Wrapf(readErr, "HTTP response body could not be read, Response status code : %v", response.StatusCode)
+			return errors.Wrapf(readErr, "HTTP response body could not be read, Response status code : %v", response.StatusCode)
 		}
 
 		// fmt.Printf("%s", responseBody)
-		ids := getDIdValues(string(responseBody))
-		fmt.Println("We got these artifacts: ", ids)
-		return ids, nil
+		idsString := getDIdValues(string(responseBody))
+		fmt.Println("We got these artifacts: ", idsString)
+		commonPipelineEnvironment.custom.artifacts = idsString
+		return nil
 	}
 
-	return nil, errors.Errorf("get integration artifacts by package id: %v failed, Response Status code: %v", config.PackageID, response.StatusCode)
+	return errors.Errorf("get integration artifacts by package id: %v failed, Response Status code: %v", config.PackageID, response.StatusCode)
 }
