@@ -61,7 +61,6 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 
 	header := make(http.Header)
 	header.Add("content-type", "application/xml")
-	// header.Add("Accept", "application/json")
 
 	// Add Basic Authentication credentials
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
@@ -108,7 +107,6 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 
 		fmt.Printf("%s", responseBody)
 		ids := getDIdValues(string(responseBody))
-		fmt.Println("JALAL: ", ids)
 		return ids, nil
 	}
 
