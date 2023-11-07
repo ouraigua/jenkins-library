@@ -106,6 +106,7 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 			return nil, errors.Wrapf(readErr, "HTTP response body could not be read, Response status code : %v", response.StatusCode)
 		}
 
+		fmt.Printf("%s", responseBody)
 		ids := getDIdValues(string(responseBody))
 		fmt.Println("JALAL: ", ids)
 		return ids, nil
