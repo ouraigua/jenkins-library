@@ -252,5 +252,6 @@ func GetPackageJSONPayloadAsByteArray(config *integrationArtifactUploadOptions) 
 	if jsonErr != nil {
 		return nil, errors.Wrapf(jsonErr, "json payload is invalid for integration flow artifact %q", config.IntegrationFlowID)
 	}
+	fmt.Printf("JSON_BODY: %s", string(jsonBody))
 	return bytes.NewBuffer(jsonBody), nil
 }
