@@ -72,10 +72,19 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		header2 := make(http.Header)
 		header2.Add("Accept", "application/json")
 		httpClient2 := &piperhttp.Client{}
-		httpClient2.SetOptions(clientOptions)
-		basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
-		authHeader := "Basic " + b64.StdEncoding.EncodeToString([]byte(basicAuth))
-		header2.Add("Authorization", authHeader)
+
+		tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
+		token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
+		if err != nil {
+			return errors.Wrap(err, "failed to fetch Bearer Token")
+		}
+		clientOptions2 := piperhttp.ClientOptions{}
+		clientOptions2.Token = fmt.Sprintf("Bearer %s", token)
+		httpClient2.SetOptions(clientOptions2)
+		
+		// basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
+		// authHeader := "Basic " + b64.StdEncoding.EncodeToString([]byte(basicAuth))
+		// header2.Add("Authorization", authHeader)
 
 		httpMethod2 := "POST"
 		
