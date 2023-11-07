@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"bytes"
-	b64 "encoding/base64"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -71,7 +71,11 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		header2 := make(http.Header)
 		header2.Add("Accept", "application/json")
 		httpClient2 := &piperhttp.Client{}
-		httpClient2.SetOptions(clientOptions)
+		// httpClient2.SetOptions(clientOptions)
+		basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
+		authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
+		header2.Add("Authorization", authHeader)
+
 		httpMethod2 := "POST"
 		
 		createPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages", serviceKey.OAuth.Host)
@@ -97,7 +101,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		} else {
 			log.Entry().
 				WithField("PackageID", config.PackageID).
-				Info("------------> Ooops!!!")
+				Info("------------>")
 		}
 	}
 
