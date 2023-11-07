@@ -8,5 +8,8 @@ void call(Map parameters = [:]) {
         [type: 'token', id: 'cpiApiServiceKeyCredentialsId', env: ['PIPER_apiServiceKey']]
     ]
 
+    echo "CALLED call() within integrationArtifactsGet.groovy"
+    echo STEP_NAME
+    echo METADATA_FILE
     piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
 }
