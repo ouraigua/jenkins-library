@@ -41,7 +41,6 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		return err
 	}
 
-
 	clientOptions := piperhttp.ClientOptions{}
 	header := make(http.Header)
 	header.Add("Accept", "application/json")
@@ -68,7 +67,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		log.Entry().
 			WithField("PackageID", config.PackageID).
 			Info("PackageId DOES NOT exist...")
-
+		/*
 		header2 := make(http.Header)
 		header2.Add("Accept", "application/json")
 		httpClient2 := &piperhttp.Client{}
@@ -113,6 +112,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 				WithField("PackageID", config.PackageID).
 				Info("------------>")
 		}
+		*/
 	}
 
 
