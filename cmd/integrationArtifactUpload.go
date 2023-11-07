@@ -67,17 +67,20 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		log.Entry().
 			WithField("PackageID", config.PackageID).
 			Info("PackageId DOES NOT exist...")
+
+		header2 := make(http.Header)
+		header2.Add("Accept", "application/json")
+		httpClient2 := &piperhttp.Client{}
+		httpClient2.SetOptions(clientOptions)
+		httpMethod2 := "POST"
 		
-		httpPostMethod := "POST"
 		createPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages", serviceKey.OAuth.Host)
-		header := make(http.Header)
-		header.Add("content-type", "application/json")
 		payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
 		if jsonError != nil {
 			return errors.Wrapf(jsonError, "Failed to get json payload for package %v, failed with error", config.PackageID)
 		}
 
-		createPackageResp, httpErr := httpClient.SendRequest(httpPostMethod, createPackageURL, payload, header, nil)
+		createPackageResp, httpErr := httpClient2.SendRequest(httpMethod2, createPackageURL, payload, header2, nil)
 
 		if createPackageResp != nil && createPackageResp.Body != nil {
 			defer createPackageResp.Body.Close()
@@ -91,6 +94,10 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 			log.Entry().
 				WithField("PackageID", config.PackageID).
 				Info("Successfully created integration package in CPI designtime")
+		} else {
+			log.Entry().
+				WithField("PackageID", config.PackageID).
+				Info("------------> Ooops!!!")
 		}
 	}
 
@@ -231,6 +238,10 @@ func GetPackageJSONPayloadAsByteArray(config *integrationArtifactUploadOptions) 
 
 	jsonObj.Set(config.PackageID, "Name")
 	jsonObj.Set(config.PackageID, "Id")
+	jsonObj.Set(config.PackageID, "Description")
+	jsonObj.Set(config.PackageID, "ShortText")
+	jsonObj.Set("1.0.0", "Version")
+
 	jsonObj.Set("SAP Cloud Integration", "SupportedPlatform")
 	
 	jsonBody, jsonErr := json.Marshal(jsonObj)
