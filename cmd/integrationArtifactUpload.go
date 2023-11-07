@@ -67,6 +67,31 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		log.Entry().
 			WithField("PackageID", config.PackageID).
 			Info("PackageId DOES NOT exist...")
+		
+		httpPostMethod := "POST"
+		createPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages", serviceKey.OAuth.Host)
+		header := make(http.Header)
+		header.Add("content-type", "application/json")
+		payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
+		if jsonError != nil {
+			return errors.Wrapf(jsonError, "Failed to get json payload for package %v, failed with error", config.PackageID)
+		}
+
+		createPackageResp, httpErr := httpClient.SendRequest(httpPostMethod, createPackageURL, payload, header, nil)
+
+		if createPackageResp != nil && createPackageResp.Body != nil {
+			defer createPackageResp.Body.Close()
+		}
+
+		if createPackageResp == nil {
+			return errors.Errorf("did not retrieve a HTTP response: %v", httpErr)
+		}
+
+		if createPackageResp.StatusCode == http.StatusCreated {
+			log.Entry().
+				WithField("PackageID", config.PackageID).
+				Info("Successfully created integration package in CPI designtime")
+		}
 	}
 
 
@@ -192,6 +217,22 @@ func GetJSONPayloadAsByteArray(config *integrationArtifactUploadOptions, mode st
 		return nil, fmt.Errorf("Unkown node: '%s'", mode)
 	}
 
+	jsonBody, jsonErr := json.Marshal(jsonObj)
+
+	if jsonErr != nil {
+		return nil, errors.Wrapf(jsonErr, "json payload is invalid for integration flow artifact %q", config.IntegrationFlowID)
+	}
+	return bytes.NewBuffer(jsonBody), nil
+}
+
+func GetPackageJSONPayloadAsByteArray(config *integrationArtifactUploadOptions) (*bytes.Buffer, error) {
+
+	jsonObj := gabs.New()
+
+	jsonObj.Set(config.PackageID, "Name")
+	jsonObj.Set(config.PackageID, "Id")
+	jsonObj.Set("SAP Cloud Integration or SAP Process Orchestration or SuccessFactors Integration Center", "SupportedPlatform")
+	
 	jsonBody, jsonErr := json.Marshal(jsonObj)
 
 	if jsonErr != nil {
