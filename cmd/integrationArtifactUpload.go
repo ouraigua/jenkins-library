@@ -74,15 +74,16 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		// authHeader := "Basic " + b64.StdEncoding.EncodeToString([]byte(basicAuth))
 		// header2.Add("Authorization", authHeader)
 
-		httpMethod := "POST"
-		
+		// httpMethod := "POST"
+		header2 := make(http.Header)
+		header2.Add("Accept", "application/json")
 		createPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages", serviceKey.OAuth.Host)
 		payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
 		if jsonError != nil {
 			return errors.Wrapf(jsonError, "Failed to get json payload for package %v, failed with error", config.PackageID)
 		}
 
-		createPackageResp, httpErr := httpClient.SendRequest(httpMethod, createPackageURL, payload, header, nil)
+		createPackageResp, httpErr := httpClient.SendRequest("POST", createPackageURL, payload, header2, nil)
 
 		if createPackageResp != nil && createPackageResp.Body != nil {
 			defer createPackageResp.Body.Close()
