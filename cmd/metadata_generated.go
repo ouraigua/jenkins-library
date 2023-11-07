@@ -83,6 +83,7 @@ func GetAllStepMetadata() map[string]config.StepData {
 		"integrationArtifactUnDeploy":               integrationArtifactUnDeployMetadata(),
 		"integrationArtifactUpdateConfiguration":    integrationArtifactUpdateConfigurationMetadata(),
 		"integrationArtifactUpload":                 integrationArtifactUploadMetadata(),
+		"integrationArtifactsGet":                   integrationArtifactsGetMetadata(),
 		"isChangeInDevelopment":                     isChangeInDevelopmentMetadata(),
 		"jsonApplyPatch":                            jsonApplyPatchMetadata(),
 		"kanikoExecute":                             kanikoExecuteMetadata(),

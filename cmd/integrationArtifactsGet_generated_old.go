@@ -17,7 +17,7 @@ import (
 
 type integrationArtifactsGetOptions struct {
 	APIServiceKey string `json:"apiServiceKey,omitempty"`
-	PackageID     string `json:"packageId,omitempty"`
+	PackageId     string `json:"integrationFlowId,omitempty"`
 }
 
 // IntegrationArtifactsGetCommand Get all integration flows of an integration package by package Id.
@@ -121,7 +121,7 @@ func IntegrationArtifactsGetCommand() *cobra.Command {
 
 func addIntegrationArtifactsGetFlags(cmd *cobra.Command, stepConfig *integrationArtifactsGetOptions) {
 	cmd.Flags().StringVar(&stepConfig.APIServiceKey, "apiServiceKey", os.Getenv("PIPER_apiServiceKey"), "Service key JSON string to access the Process Integration Runtime service instance of plan 'api'")
-	cmd.Flags().StringVar(&stepConfig.PackageID, "packageId", os.Getenv("PIPER_packageId"), "Specifies the ID of the integration package")
+	cmd.Flags().StringVar(&stepConfig.PackageId, "packageId", os.Getenv("PIPER_packageId"), "Specifies the ID of the Integration package")
 
 	cmd.MarkFlagRequired("apiServiceKey")
 	cmd.MarkFlagRequired("packageId")
@@ -159,7 +159,7 @@ func integrationArtifactsGetMetadata() config.StepData {
 					{
 						Name:        "packageId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:        "string",
 						Mandatory:   true,
 						Aliases:     []config.Alias{},

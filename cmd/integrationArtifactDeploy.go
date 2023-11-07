@@ -1,11 +1,11 @@
 package cmd
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
-	"encoding/base64"
 
 	"github.com/Jeffail/gabs/v2"
 	"github.com/SAP/jenkins-library/pkg/command"
@@ -165,12 +165,12 @@ func getHTTPErrorMessage(httpErr error, response *http.Response, httpMethod, sta
 
 // getIntegrationArtifactDeployStatus - Get integration artifact Deploy Status
 func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions, httpClient piperhttp.Sender, apiHost string, taskId string) (string, error) {
-	
+
 	httpMethod := "GET"
 	header := make(http.Header)
 	header.Add("content-type", "application/json")
 	header.Add("Accept", "application/json")
-	
+
 	// Add Basic Authentication credentials
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
 	if err != nil {
@@ -179,8 +179,8 @@ func getIntegrationArtifactDeployStatus(config *integrationArtifactDeployOptions
 
 	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
-	header.Add("Authorization", authHeader)	
-	
+	header.Add("Authorization", authHeader)
+
 	deployStatusURL := fmt.Sprintf("%s/api/v1/BuildAndDeployStatus(TaskId='%s')", apiHost, taskId)
 	deployStatusResp, httpErr := httpClient.SendRequest(httpMethod, deployStatusURL, nil, header, nil)
 

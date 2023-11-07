@@ -1,11 +1,11 @@
 package cmd
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
-	"encoding/base64"
 
 	"github.com/Jeffail/gabs/v2"
 	"github.com/SAP/jenkins-library/pkg/cpi"
@@ -42,7 +42,7 @@ func runIntegrationArtifactGetMplStatus(
 	// 	return err
 	// }
 	// clientOptions := piperhttp.ClientOptions{}
-	// httpClient.SetOptions(clientOptions)	
+	// httpClient.SetOptions(clientOptions)
 	// tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
 	// token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
 	// if err != nil {
@@ -50,7 +50,7 @@ func runIntegrationArtifactGetMplStatus(
 	// }
 	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
 	// httpClient.SetOptions(clientOptions)
-	
+
 	httpMethod := "GET"
 	header := make(http.Header)
 	header.Add("Accept", "application/json")
@@ -64,11 +64,11 @@ func runIntegrationArtifactGetMplStatus(
 	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
 	header.Add("Authorization", authHeader)
-	
+
 	mplStatusEncodedURL := fmt.Sprintf("%s/api/v1/MessageProcessingLogs?$filter=IntegrationArtifact/Id"+url.QueryEscape(" eq ")+"'%s'"+
 		url.QueryEscape(" and Status ne ")+"'DISCARDED'"+"&$orderby="+url.QueryEscape("LogEnd desc")+"&$top=1", serviceKey.OAuth.Host, config.IntegrationFlowID)
 	mplStatusResp, httpErr := httpClient.SendRequest(httpMethod, mplStatusEncodedURL, nil, header, nil)
-	
+
 	if httpErr != nil {
 		return errors.Wrapf(httpErr, "HTTP %v request to %v failed with error", httpMethod, mplStatusEncodedURL)
 	}
@@ -124,14 +124,14 @@ func getIntegrationArtifactMPLError(commonPipelineEnvironment *integrationArtifa
 	httpMethod := "GET"
 	header := make(http.Header)
 	header.Add("content-type", "application/json")
-	
+
 	// // Add Basic Authentication credentials
 	// withCredentials([usernamePassword(credentialsId: 'MY-SAP-TRIAL', passwordVariable: 'pass', usernameVariable: 'user')]) {
-  //   // the code here can access $pass and $user
+	//   // the code here can access $pass and $user
 	// 	basicAuth := $user + ":" + $pass
 	// 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
 	// 	header.Add("Authorization", authHeader)
-	// }	
+	// }
 
 	errorStatusURL := fmt.Sprintf("%s/api/v1/MessageProcessingLogs('%s')/ErrorInformation/$value", apiHost, mplID)
 	errorStatusResp, httpErr := httpClient.SendRequest(httpMethod, errorStatusURL, nil, header, nil)

@@ -1,11 +1,10 @@
 package cmd
 
 import (
+	"encoding/xml"
 	"fmt"
 	"io"
 	"net/http"
-	"encoding/xml"
-
 
 	"github.com/SAP/jenkins-library/pkg/cpi"
 	piperhttp "github.com/SAP/jenkins-library/pkg/http"
@@ -13,7 +12,6 @@ import (
 	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/pkg/errors"
 )
-
 
 // import (
 // 	"bytes"
@@ -33,7 +31,6 @@ type XMLResult struct {
 //     def artifact = parameters.artifact ?: 'Undefined'
 //     // Your custom step logic here, using integrationFlowId
 // }
-
 
 func integrationArtifactsGet(config integrationArtifactsGetOptions, telemetryData *telemetry.CustomData) []string {
 	// Utils can be used wherever the command.ExecRunner interface is expected.
@@ -101,6 +98,6 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 		output = result.Ids
 		return output, nil
 	}
-	
+
 	return nil, errors.Errorf("get integration artifacts by package id: %v failed, Response Status code: %v", config.PackageId, response.StatusCode)
 }
