@@ -231,7 +231,7 @@ func GetPackageJSONPayloadAsByteArray(config *integrationArtifactUploadOptions) 
 
 	jsonObj.Set(config.PackageID, "Name")
 	jsonObj.Set(config.PackageID, "Id")
-	jsonObj.Set("SAP Cloud Integration or SAP Process Orchestration or SuccessFactors Integration Center", "SupportedPlatform")
+	jsonObj.Set("SAP Cloud Integration", "SupportedPlatform")
 	
 	jsonBody, jsonErr := json.Marshal(jsonObj)
 
