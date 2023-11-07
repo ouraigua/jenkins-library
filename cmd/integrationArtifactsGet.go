@@ -107,6 +107,7 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 		}
 
 		ids := getDIdValues(string(responseBody))
+		fmt.Println("JALAL: ", ids)
 		return ids, nil
 	}
 
