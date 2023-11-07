@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/base64"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -53,7 +54,6 @@ func integrationArtifactsGet(config integrationArtifactsGetOptions, telemetryDat
 
 func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetryData *telemetry.CustomData, httpClient piperhttp.Sender) ([]string, error) {
 
-	clientOptions := piperhttp.ClientOptions{}
 	header := make(http.Header)
 	header.Add("Accept", "application/zip")
 
@@ -69,6 +69,7 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 
 	getArtifactsURL := fmt.Sprintf("%s/api/v1/IntegrationPackages('%s')/IntegrationDesigntimeArtifacts", serviceKey.OAuth.Host, config.PackageID)
 	
+	// clientOptions := piperhttp.ClientOptions{}
 	// tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
 	// token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
 	// if err != nil {
