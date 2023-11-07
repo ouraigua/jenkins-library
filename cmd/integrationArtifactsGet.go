@@ -80,7 +80,7 @@ func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions, telemetr
 	
 	log.Entry().
 			WithField("Get packages", serviceKey.OAuth.Username).
-			Info("JALAL JALAL")
+			Info("JALAL JALAL: %s", serviceKey.OAuth.Username)
 
 
 	httpMethod := "GET"
