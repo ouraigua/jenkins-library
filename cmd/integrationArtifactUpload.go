@@ -223,7 +223,7 @@ func GetPackageJSONPayloadAsByteArray(config *integrationArtifactUploadOptions) 
 	if jsonErr != nil {
 		return nil, errors.Wrapf(jsonErr, "json payload is invalid for integration flow artifact %q", config.IntegrationFlowID)
 	}
-	fmt.Printf("JSON_BODY: %s\n", string(jsonBody))
+	fmt.Printf("Package creation JSON body: %s\n", string(jsonBody))
 	return bytes.NewBuffer(jsonBody), nil
 
 }
@@ -261,19 +261,6 @@ func fetch_xCSRFToken_and_cookie(username, password, endpoint string) (string, s
 
 func create_packge_if_required(config *integrationArtifactUploadOptions, username, password, apiEndpoint, packageId string)  {
 
-	// data := map[string]interface{}{
-	// 	"Id":              "Mama",
-	// 	"Name":            "Mama",
-	// 	"Description":     "string",
-	// 	"ShortText":       "string",
-	// 	"Version":         "string",
-	// 	"SupportedPlatform": "SAP Cloud Integration",
-	// }
-	// jsonData, err := json.Marshal(data)
-	// fmt.Printf("jsonData: %s\n", jsonData)
-	// if err != nil { fmt.Println("jsonData Error: ", err)}
-	// payload := bytes.NewBuffer(jsonData)
-
 	payload, err := GetPackageJSONPayloadAsByteArray(config)
 
 	apiUrl := fmt.Sprintf("%s/api/v1/IntegrationPackages", apiEndpoint)
@@ -306,10 +293,10 @@ func create_packge_if_required(config *integrationArtifactUploadOptions, usernam
 	}
 
 	// Read the response body
-	responseBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("Error-5: ", err)
-	}
+	// responseBody, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	fmt.Println("Error-5: ", err)
+	// }
 
-	fmt.Println("Response:", string(responseBody))
+	// fmt.Println("Response:", string(responseBody))
 }
