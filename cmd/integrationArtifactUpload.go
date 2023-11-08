@@ -87,10 +87,24 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		authHeader := "Basic " + b64.StdEncoding.EncodeToString([]byte(basicAuth))
 		header.Add("Authorization", authHeader)
 	
-		payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
-		if jsonError != nil {
-			return errors.Wrapf(jsonError, "Failed to get json payload for package %v, failed with error", config.PackageID)
+		// payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
+		// if jsonError != nil {
+		// 	return errors.Wrapf(jsonError, "Failed to get json payload for package %v, failed with error", config.PackageID)
+		// }
+
+		data := map[string]interface{}{
+			"Id":              "Mama",
+			"Name":            "Mama",
+			"Description":     "string",
+			"ShortText":       "string",
+			"Version":         "string",
+			"SupportedPlatform": "SAP Cloud Integration",
 		}
+		jsonData, err := json.Marshal(data)
+		fmt.Printf("jsonData: %s\n", jsonData)
+		if err != nil { fmt.Println("jsonData Error: ", err)}
+		payload := bytes.NewBuffer(jsonData)
+		
 
 		httpMethod := "POST"
 		createPackageResp, httpErr := httpClient.SendRequest(httpMethod, createPackageURL, payload, header, nil)
@@ -263,6 +277,7 @@ func GetPackageJSONPayloadAsByteArray(config *integrationArtifactUploadOptions) 
 	}
 	fmt.Printf("JSON_BODY: %s\n", string(jsonBody))
 	return bytes.NewBuffer(jsonBody), nil
+
 }
 
 func fetch_xCSRFToken_and_cookie(username, password, endpoint string) (string, string, error) {
