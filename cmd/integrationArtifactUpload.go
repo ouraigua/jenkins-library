@@ -8,6 +8,12 @@ import (
 	"io"
 	"net/http"
 
+
+	"io/ioutil"
+	"os"
+
+
+
 	"github.com/Jeffail/gabs/v2"
 	"github.com/SAP/jenkins-library/pkg/cpi"
 	piperhttp "github.com/SAP/jenkins-library/pkg/http"
@@ -75,9 +81,18 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		// header2.Add("Authorization", authHeader)
 
 		// httpMethod := "POST"
+		createPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages", serviceKey.OAuth.Host)
+		xCSRFToken, err := fetchXCSRFToken(serviceKey.OAuth.Username, serviceKey.OAuth.Password, createPackageURL)
+		if err != nil {
+			fmt.Println("Error:", err)
+		}
+
+		fmt.Println("X-CSRF-Token:", xCSRFToken)
+		
 		header2 := make(http.Header)
 		header2.Add("Accept", "application/json")
-		createPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages", serviceKey.OAuth.Host)
+		header2.Add("x-csrf-token", xCSRFToken)
+		
 		payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
 		if jsonError != nil {
 			return errors.Wrapf(jsonError, "Failed to get json payload for package %v, failed with error", config.PackageID)
@@ -255,4 +270,36 @@ func GetPackageJSONPayloadAsByteArray(config *integrationArtifactUploadOptions) 
 	}
 	fmt.Printf("JSON_BODY: %s", string(jsonBody))
 	return bytes.NewBuffer(jsonBody), nil
+}
+
+func fetchXCSRFToken(username, password, endpoint string) (string, error) {
+	client := &http.Client{}
+
+	// Create an HTTP request with Basic Authentication
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return "", err
+	}
+
+	req.SetBasicAuth(username, password)
+
+	// Set the "X-CSRF-Token" header to "Fetch"
+	req.Header.Add("X-CSRF-Token", "Fetch")
+
+	// Send the HTTP request
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// Check if the request was successful
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("Request failed with status code: %d", resp.StatusCode)
+	}
+
+	// Extract the X-CSRF-Token value from the response headers
+	xCSRFToken := resp.Header.Get("X-CSRF-Token")
+
+	return xCSRFToken, nil
 }
