@@ -56,6 +56,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 	httpMethod := "GET"
 
 	// Jalal Addition
+	// we first check if package exists
 	integrationPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages(Id='%s')", serviceKey.OAuth.Host, config.PackageID)
 	integrationPackageResp, httpErr := httpClient.SendRequest(httpMethod, integrationPackageURL, nil, header, nil)
 	if integrationPackageResp != nil && integrationPackageResp.Body != nil {
@@ -71,30 +72,24 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 			Info("PackageId DOES NOT exist...")
 		
 		
-		
-		// basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
-		// authHeader := "Basic " + b64.StdEncoding.EncodeToString([]byte(basicAuth))
-		// header2.Add("Authorization", authHeader)
-
-		// httpMethod := "POST"
 		createPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages", serviceKey.OAuth.Host)
-		xCSRFToken, err := fetchXCSRFToken(serviceKey.OAuth.Username, serviceKey.OAuth.Password, createPackageURL)
+		csrfToken, csrfCookie, err := fetch_xCSRFToken_and_cookie(serviceKey.OAuth.Username, serviceKey.OAuth.Password, createPackageURL)
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Println("Failed to retrieve X-CSRF-Token and Cookie:", err)
 		}
+		fmt.Println("X-CSRF-Token:", csrfToken)
 
-		fmt.Println("X-CSRF-Token:", xCSRFToken)
-		
-		header2 := make(http.Header)
-		header2.Add("Accept", "application/json")
-		header2.Add("x-csrf-token", xCSRFToken)
-		
+		header.Add("Accept", "application/json")
+		header.Add("Cookie", csrfCookie)
+		header.Add("x-csrf-token", csrfToken)
+	
 		payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
 		if jsonError != nil {
 			return errors.Wrapf(jsonError, "Failed to get json payload for package %v, failed with error", config.PackageID)
 		}
 
-		createPackageResp, httpErr := httpClient.SendRequest("POST", createPackageURL, payload, header2, nil)
+		httpMethod := "POST"
+		createPackageResp, httpErr := httpClient.SendRequest(httpMethod, createPackageURL, payload, header, nil)
 
 		if createPackageResp != nil && createPackageResp.Body != nil {
 			defer createPackageResp.Body.Close()
@@ -268,34 +263,32 @@ func GetPackageJSONPayloadAsByteArray(config *integrationArtifactUploadOptions) 
 	return bytes.NewBuffer(jsonBody), nil
 }
 
-func fetchXCSRFToken(username, password, endpoint string) (string, error) {
+func fetch_xCSRFToken_and_cookie(username, password, endpoint string) (string, string, error) {
 	client := &http.Client{}
 
 	// Create an HTTP request with Basic Authentication
-	req, err := http.NewRequest("GET", endpoint, nil)
-	if err != nil {
-		return "", err
-	}
+	url := endpoint + "?$top=1"
+	fmt.Printf("x-csrf-token URL: %s\n", url)
+	
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil { return "", "", err }
 
 	req.SetBasicAuth(username, password)
-
-	// Set the "X-CSRF-Token" header to "Fetch"
-	req.Header.Add("X-CSRF-Token", "Fetch")
+	req.Header.Add("x-csrf-token", "fetch")
 
 	// Send the HTTP request
 	resp, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
+	if err != nil { return "", "", err }
 	defer resp.Body.Close()
 
 	// Check if the request was successful
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("Request failed with status code: %d", resp.StatusCode)
+		return "","", fmt.Errorf("Request failed with status code: %d", resp.StatusCode)
 	}
 
 	// Extract the X-CSRF-Token value from the response headers
 	xCSRFToken := resp.Header.Get("X-CSRF-Token")
+	csrfCookie := resp.Header.Get("Set-Cookie")
 
-	return xCSRFToken, nil
+	return xCSRFToken, csrfCookie, nil
 }
