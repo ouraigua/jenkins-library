@@ -9,10 +9,6 @@ import (
 	"net/http"
 
 
-	"io/ioutil"
-	"os"
-
-
 
 	"github.com/Jeffail/gabs/v2"
 	"github.com/SAP/jenkins-library/pkg/cpi"
