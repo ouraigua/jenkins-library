@@ -71,7 +71,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 			WithField("PackageID", config.PackageID).
 			Info("PackageId DOES NOT exist...")
 
-		create_packge_if_required(serviceKey.OAuth.Username, serviceKey.OAuth.Password, apiEndpoint, config.PackageID)
+		create_packge_if_required(serviceKey.OAuth.Username, serviceKey.OAuth.Password, serviceKey.OAuth.Host, config.PackageID)
 		
 	}
 
