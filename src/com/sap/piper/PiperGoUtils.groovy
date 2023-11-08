@@ -42,7 +42,7 @@ class PiperGoUtils implements Serializable {
                 //     steps.sh "CGO_ENABLED=0 /usr/local/go/bin/go build -tags release -ldflags \"-X github.com/SAP/jenkins-library/cmd.GitCommit=${steps.env.LIBRARY_VERSION_UNDER_TEST}\" -o ../piper . && chmod +x ../piper && chown 1000:999 ../piper"
                 // }
                 steps.dir(piperTmp) {
-                    steps.sh "CGO_ENABLED=0 /usr/local/go/bin/go build -tags release -ldflags \"-X github.com/SAP/jenkins-library/cmd.GitCommit=${steps.env.LIBRARY_VERSION_UNDER_TEST}\" -o ../piper . && chmod +x ../piper"
+                    steps.sh "CGO_ENABLED=0 /opt/homebrew/bin/go build -tags release -ldflags \"-X github.com/SAP/jenkins-library/cmd.GitCommit=${steps.env.LIBRARY_VERSION_UNDER_TEST}\" -o ../piper . && chmod +x ../piper"
                 }
                 steps.sh "rm -rf ${piperTar} ${piperTmp}"
             }
