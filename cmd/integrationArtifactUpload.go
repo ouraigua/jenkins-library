@@ -71,7 +71,7 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 			WithField("PackageID", config.PackageID).
 			Info("PackageId DOES NOT exist...")
 
-		create_packge_if_required(serviceKey.OAuth.Username, serviceKey.OAuth.Password, serviceKey.OAuth.Host, config.PackageID)
+		create_packge_if_required(config, serviceKey.OAuth.Username, serviceKey.OAuth.Password, serviceKey.OAuth.Host, config.PackageID)
 		
 	}
 
@@ -259,24 +259,27 @@ func fetch_xCSRFToken_and_cookie(username, password, endpoint string) (string, s
 }
 
 
-func create_packge_if_required(username, password, apiEndpoint, packageId string)  {
+func create_packge_if_required(config *integrationArtifactUploadOptions, username, password, apiEndpoint, packageId string)  {
 
-	data := map[string]interface{}{
-		"Id":              "Mama",
-		"Name":            "Mama",
-		"Description":     "string",
-		"ShortText":       "string",
-		"Version":         "string",
-		"SupportedPlatform": "SAP Cloud Integration",
-	}
-	jsonData, err := json.Marshal(data)
-	fmt.Printf("jsonData: %s\n", jsonData)
-	if err != nil { fmt.Println("jsonData Error: ", err)}
+	// data := map[string]interface{}{
+	// 	"Id":              "Mama",
+	// 	"Name":            "Mama",
+	// 	"Description":     "string",
+	// 	"ShortText":       "string",
+	// 	"Version":         "string",
+	// 	"SupportedPlatform": "SAP Cloud Integration",
+	// }
+	// jsonData, err := json.Marshal(data)
+	// fmt.Printf("jsonData: %s\n", jsonData)
+	// if err != nil { fmt.Println("jsonData Error: ", err)}
+	// payload := bytes.NewBuffer(jsonData)
+
+	payload, err := GetPackageJSONPayloadAsByteArray(config)
 
 	apiUrl := fmt.Sprintf("%s/api/v1/IntegrationPackages", apiEndpoint)
 
 	client := &http.Client{}
-	req, _ := http.NewRequest("POST", apiUrl, bytes.NewBuffer(jsonData))
+	req, _ := http.NewRequest("POST", apiUrl, payload)
 	req.Header.Set("Content-Type", "application/json")
 	req.SetBasicAuth(username, password)
 
