@@ -82,6 +82,10 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		header.Add("Accept", "application/json")
 		header.Add("Cookie", csrfCookie)
 		header.Add("x-csrf-token", csrfToken)
+
+		basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
+		authHeader := "Basic " + b64.StdEncoding.EncodeToString([]byte(basicAuth))
+		header.Add("Authorization", authHeader)
 	
 		payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
 		if jsonError != nil {
@@ -100,15 +104,13 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		}
 
 		if createPackageResp.StatusCode == http.StatusCreated {
-			log.Entry().
-				WithField("PackageID", config.PackageID).
-				Info("Successfully created integration package in CPI designtime")
+			fmt.Printf("Successfully created integration package: %s in CPI designtime\n", config.PackageID)
 		} else {
-			log.Entry().
-				WithField("PackageID", config.PackageID).
-				Info("------------>")
+			fmt.Printf("Request failed with status code: %d\n", createPackageResp.StatusCode)
+			createResponseBody, err := io.ReadAll(createPackageResp.Body)
+			if err != nil { fmt.Println("createResponseBody Error: ", err)}
+			fmt.Println("Response:", string(createResponseBody))
 		}
-
 	}
 
 
@@ -259,7 +261,7 @@ func GetPackageJSONPayloadAsByteArray(config *integrationArtifactUploadOptions) 
 	if jsonErr != nil {
 		return nil, errors.Wrapf(jsonErr, "json payload is invalid for integration flow artifact %q", config.IntegrationFlowID)
 	}
-	fmt.Printf("JSON_BODY: %s", string(jsonBody))
+	fmt.Printf("JSON_BODY: %s\n", string(jsonBody))
 	return bytes.NewBuffer(jsonBody), nil
 }
 
