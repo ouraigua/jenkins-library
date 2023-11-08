@@ -70,61 +70,9 @@ func runIntegrationArtifactUpload(config *integrationArtifactUploadOptions, tele
 		log.Entry().
 			WithField("PackageID", config.PackageID).
 			Info("PackageId DOES NOT exist...")
+
+		create_packge_if_required(serviceKey.OAuth.Username, serviceKey.OAuth.Password, apiEndpoint, config.PackageID)
 		
-		
-		createPackageURL := fmt.Sprintf("%s/api/v1/IntegrationPackages", serviceKey.OAuth.Host)
-		csrfToken, csrfCookie, err := fetch_xCSRFToken_and_cookie(serviceKey.OAuth.Username, serviceKey.OAuth.Password, createPackageURL)
-		if err != nil {
-			fmt.Println("Failed to retrieve X-CSRF-Token and Cookie:", err)
-		}
-		fmt.Println("X-CSRF-Token:", csrfToken)
-
-		header.Add("Accept", "application/json")
-		header.Add("Cookie", csrfCookie)
-		header.Add("x-csrf-token", csrfToken)
-
-		basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
-		authHeader := "Basic " + b64.StdEncoding.EncodeToString([]byte(basicAuth))
-		header.Add("Authorization", authHeader)
-	
-		// payload, jsonError := GetPackageJSONPayloadAsByteArray(config)
-		// if jsonError != nil {
-		// 	return errors.Wrapf(jsonError, "Failed to get json payload for package %v, failed with error", config.PackageID)
-		// }
-
-		data := map[string]interface{}{
-			"Id":              "Mama",
-			"Name":            "Mama",
-			"Description":     "string",
-			"ShortText":       "string",
-			"Version":         "string",
-			"SupportedPlatform": "SAP Cloud Integration",
-		}
-		jsonData, err := json.Marshal(data)
-		fmt.Printf("jsonData: %s\n", jsonData)
-		if err != nil { fmt.Println("jsonData Error: ", err)}
-		payload := bytes.NewBuffer(jsonData)
-		
-
-		httpMethod := "POST"
-		createPackageResp, httpErr := httpClient.SendRequest(httpMethod, createPackageURL, payload, header, nil)
-
-		if createPackageResp != nil && createPackageResp.Body != nil {
-			defer createPackageResp.Body.Close()
-		}
-
-		if createPackageResp == nil {
-			return errors.Errorf("did not retrieve a HTTP response: %v", httpErr)
-		}
-
-		if createPackageResp.StatusCode == http.StatusCreated {
-			fmt.Printf("Successfully created integration package: %s in CPI designtime\n", config.PackageID)
-		} else {
-			fmt.Printf("Request failed with status code: %d\n", createPackageResp.StatusCode)
-			createResponseBody, err := io.ReadAll(createPackageResp.Body)
-			if err != nil { fmt.Println("createResponseBody Error: ", err)}
-			fmt.Println("Response:", string(createResponseBody))
-		}
 	}
 
 
@@ -308,4 +256,57 @@ func fetch_xCSRFToken_and_cookie(username, password, endpoint string) (string, s
 	csrfCookie := resp.Header.Get("Set-Cookie")
 
 	return xCSRFToken, csrfCookie, nil
+}
+
+
+func create_packge_if_required(username, password, apiEndpoint, packageId string)  {
+
+	data := map[string]interface{}{
+		"Id":              "Mama",
+		"Name":            "Mama",
+		"Description":     "string",
+		"ShortText":       "string",
+		"Version":         "string",
+		"SupportedPlatform": "SAP Cloud Integration",
+	}
+	jsonData, err := json.Marshal(data)
+	fmt.Printf("jsonData: %s\n", jsonData)
+	if err != nil { fmt.Println("jsonData Error: ", err)}
+
+	apiUrl := fmt.Sprintf("%s/api/v1/IntegrationPackages", apiEndpoint)
+
+	client := &http.Client{}
+	req, _ := http.NewRequest("POST", apiUrl, bytes.NewBuffer(jsonData))
+	req.Header.Set("Content-Type", "application/json")
+	req.SetBasicAuth(username, password)
+
+		
+	// get the x-csrf-token
+	csrfToken, csrfCookie, err := fetch_xCSRFToken_and_cookie(username, password, apiUrl)
+	if err != nil { fmt.Println("xCSRFToken Error: ", err)}
+	fmt.Println("xCSRFToken: ", csrfToken)
+
+	
+	req.Header.Add("Cookie", csrfCookie)
+	req.Header.Add("x-csrf-token", csrfToken)
+	
+	// Send the HTTP request
+	resp, err := client.Do(req)
+	if err != nil { fmt.Println("httpRequest Error: ", err) }
+	defer resp.Body.Close()
+
+	// Check if the request was successful
+	if resp.StatusCode != http.StatusCreated {
+		fmt.Printf("Request failed with status code: %d\n", resp.StatusCode)
+	} else {
+		fmt.Printf("Response Code: %d\n", resp.StatusCode)
+	}
+
+	// Read the response body
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error-5: ", err)
+	}
+
+	fmt.Println("Response:", string(responseBody))
 }
