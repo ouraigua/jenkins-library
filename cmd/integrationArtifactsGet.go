@@ -61,33 +61,22 @@ func getDIdValues(xmlData string) string {
 }
 
 func runIntegrationArtifactsGet(config *integrationArtifactsGetOptions,
-	telemetryData *telemetry.CustomData,
-	httpClient piperhttp.Sender,
-	commonPipelineEnvironment *integrationArtifactsGetCommonPipelineEnvironment) error {
+																telemetryData *telemetry.CustomData,
+																httpClient piperhttp.Sender,
+																commonPipelineEnvironment *integrationArtifactsGetCommonPipelineEnvironment) error {
 
 	header := make(http.Header)
 	header.Add("content-type", "application/xml")
 
-	// Add Basic Authentication credentials
 	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
 	if err != nil {
 		return err
 	}
-
 	basicAuth := serviceKey.OAuth.Username + ":" + serviceKey.OAuth.Password
 	authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(basicAuth))
 	header.Add("Authorization", authHeader)
 
 	getArtifactsURL := fmt.Sprintf("%s/api/v1/IntegrationPackages('%s')/IntegrationDesigntimeArtifacts", serviceKey.OAuth.Host, config.PackageID)
-
-	// clientOptions := piperhttp.ClientOptions{}
-	// tokenParameters := cpi.TokenParameters{TokenURL: serviceKey.OAuth.OAuthTokenProviderURL, Username: serviceKey.OAuth.ClientID, Password: serviceKey.OAuth.ClientSecret, Client: httpClient}
-	// token, err := cpi.CommonUtils.GetBearerToken(tokenParameters)
-	// if err != nil {
-	// 	return nil, errors.Wrap(err, "failed to fetch Bearer Token")
-	// }
-	// clientOptions.Token = fmt.Sprintf("Bearer %s", token)
-	// httpClient.SetOptions(clientOptions)
 
 	httpMethod := "GET"
 	response, httpErr := httpClient.SendRequest(httpMethod, getArtifactsURL, nil, header, nil)
